@@ -209,24 +209,6 @@ class LSM6DSOSensor
      */
     uint8_t IO_Read(uint8_t* pBuffer, uint8_t RegisterAddr, uint16_t NumByteToRead)
     {        
-      if (dev_spi) {
-        dev_spi->beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
-
-        digitalWrite(cs_pin, LOW);
-
-        /* Write Reg Address */
-        dev_spi->transfer(RegisterAddr | 0x80);
-        /* Read the data */
-        for (uint16_t i=0; i<NumByteToRead; i++) {
-          *(pBuffer+i) = dev_spi->transfer(0x00);
-        }
-         
-        digitalWrite(cs_pin, HIGH);
-
-        dev_spi->endTransaction();
-
-        return 0;
-      }
 		
       if (dev_i2c) {
         dev_i2c->beginTransmission(((uint8_t)(((address) >> 1) & 0x7F)));
@@ -256,24 +238,7 @@ class LSM6DSOSensor
      */
     uint8_t IO_Write(uint8_t* pBuffer, uint8_t RegisterAddr, uint16_t NumByteToWrite)
     {  
-      if (dev_spi) {
-        dev_spi->beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
 
-        digitalWrite(cs_pin, LOW);
-
-        /* Write Reg Address */
-        dev_spi->transfer(RegisterAddr);
-        /* Write the data */
-        for (uint16_t i=0; i<NumByteToWrite; i++) {
-          dev_spi->transfer(pBuffer[i]);
-        }
-
-        digitalWrite(cs_pin, HIGH);
-
-        dev_spi->endTransaction();
-
-        return 0;                    
-      }
   
       if (dev_i2c) {
         dev_i2c->beginTransmission(((uint8_t)(((address) >> 1) & 0x7F)));
